@@ -8,8 +8,8 @@ import PrincipalController from "./rest/controllers/PrincipalController";
 import { Principal } from "./core/security/Principal";
 import * as ExpressSession from "express-session";
 import { User } from "./core/user/User";
-import * as config from "./config";
 import RouteAuthenticator from "./rest/RouteAuthenticator";
+require('dotenv').config();
 
 class App {
 
@@ -48,13 +48,14 @@ class App {
   }
 
   private async connectDB(){
+    console.log(process.env.DB_HOST);
       await createConnection({
         type: "mysql",
-        host: config.env.mysql.host,
-        port: config.env.mysql.port,
-        username: config.env.mysql.username,
-        password: config.env.mysql.password,
-        database: config.env.mysql.database,
+        host: process.env.DB_HOST,
+        port: parseInt(process.env.DB_PORT),
+        username: process.env.DB_USERNAME,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
         entities: [Feedback, Principal, User],
         synchronize: true
     });

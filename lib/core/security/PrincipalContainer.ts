@@ -12,7 +12,6 @@ export default class PrincipalContainer{
         try{
             let tempPrincipal = await getManager().getRepository(Principal).find({ relations: ["subject"], where: {accessKey: obj.email}});
             let passwordStatus = await this.comparePassword(obj.password, tempPrincipal[0].passwordHash);
-
             if(passwordStatus == true){
                 return tempPrincipal[0].subject;
             }else{
