@@ -17,7 +17,10 @@ export default class PrincipalController{
             let user = await principalContainer.validatePrincipal(req.body);
             
             if(user != null){
+                console.log("user from login is: ", user);
                 req.session.subject = user;
+                console.log("retrieving session user: ", req.session.subject);
+                req.session.save((err) => err ? console.log('err from save sess is: ', err) : "");
                 res.sendStatus(200);
             }else{
                 res.sendStatus(400);
