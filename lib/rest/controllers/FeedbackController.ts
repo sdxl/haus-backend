@@ -4,6 +4,8 @@ import FeedbackContainer from "../../core/feedback/FeedbackContainer";
 import {Feedback} from "../../core/feedback/Feedback";
 import SlackService from "../../services/SlackService";
 import SlackBodyPayload from "../../services/SlackBodyPayload";
+import RouteAuthenticator from "../RouteAuthenticator";
+
 require('dotenv').config();
 
 export default class FeedbackController{
@@ -19,14 +21,14 @@ export default class FeedbackController{
         const feedbackContainer = new FeedbackContainer();
         const router = express.Router();
     
-        router.get('/', async (req: Request, res: Response) => {
+        router.get('/', new RouteAuthenticator().isAuthenticated, async (req: Request, res: Response) => {
           let feedbackForUser = await feedbackContainer.getAllFeedbackByUserId(req.session.subject);
           res.json({
             feedback: feedbackForUser
           })
         });
 
-        router.post('/', async (req: Request, res: Response) => {
+        router.post('/', new RouteAuthenticator().isAuthenticated, async (req: Request, res: Response) => {
             let tempFeedback = req.body as Feedback;
             await feedbackContainer.addNewFeedback(tempFeedback, req.session.subject);
             

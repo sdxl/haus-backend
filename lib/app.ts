@@ -8,7 +8,6 @@ import PrincipalController from "./rest/controllers/PrincipalController";
 import { Principal } from "./core/security/Principal";
 import * as ExpressSession from "express-session";
 import { User } from "./core/user/User";
-import RouteAuthenticator from "./rest/RouteAuthenticator";
 require('dotenv').config();
 
 class App {
@@ -44,7 +43,7 @@ class App {
 
   private routes(): void {
     this.app.use('/auth', new PrincipalController().routes);
-    this.app.use('/feedback', new RouteAuthenticator().isAuthenticated, new FeedbackController().routes);
+    this.app.use('/feedback', new FeedbackController().routes);
   }
 
   private async connectDB(){
