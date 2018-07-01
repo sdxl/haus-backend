@@ -21,8 +21,7 @@ class App {
         secure: false
       },
       resave: false,
-      saveUninitialized: false,
-      rolling: true
+      saveUninitialized: true,
     }));
 
     this.connectDB();
