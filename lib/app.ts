@@ -18,6 +18,7 @@ class App {
       secret: "my-greatest-secret",
       cookie:{
         maxAge: 60 * 60 * 1000,
+        secure: false
       },
       resave: false,
       saveUninitialized: false,
