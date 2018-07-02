@@ -24,20 +24,20 @@ export default class FeedbackController{
     
         router.get('/', new RouteAuthenticator().isAuthenticated, async (req: HausRequest, res: Response) => {
           let feedbackForUser = await feedbackContainer.getAllFeedbackByUser(req.subject);
-          res.json({
+          res.send(200).json({
             feedback: feedbackForUser
           })
         });
 
         router.post('/', new RouteAuthenticator().isAuthenticated, async (req: HausRequest, res: Response) => {
             let tempFeedback = req.body as Feedback;
-            await feedbackContainer.addNewFeedback(tempFeedback, req.subject);
+            let feedback = await feedbackContainer.addNewFeedback(tempFeedback, req.subject);
             
             let slackBody = new SlackBodyPayload();
-            slackBody.attachments = [{author_name: req.subject.firstName, text: tempFeedback.content}]
+            slackBody.attachments = [{author_name: req.subject.firstName, text: feedback.content}]
 
             this.slackService.submitToWebhook(process.env.SLACK_FEEDBACKURL, slackBody);
-            res.sendStatus(200);
+            res.send(201).json({feedback: feedback});
         });
 
         this.routes = router;

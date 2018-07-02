@@ -12,11 +12,11 @@ export default class FeedbackContainer{
         return allFeedback;
     }
 
-    async addNewFeedback(obj: Feedback, user: User): Promise<boolean>{
-        let feedback = new Feedback();
-        feedback.content = obj.content;
-        feedback.user = user;
-        await getManager().save(feedback);
-        return true;
+    async addNewFeedback(obj: Feedback, user: User): Promise<Feedback>{
+        let tempFeedback = new Feedback();
+        tempFeedback.content = obj.content;
+        tempFeedback.user = user;
+        let feedback = await getManager().save(tempFeedback);
+        return feedback;
     }
 }
