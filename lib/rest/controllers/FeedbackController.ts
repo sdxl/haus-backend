@@ -24,7 +24,7 @@ export default class FeedbackController{
     
         router.get('/', new RouteAuthenticator().isAuthenticated, async (req: HausRequest, res: Response) => {
           let feedbackForUser = await feedbackContainer.getAllFeedbackByUser(req.subject);
-          res.send(200).json({
+          res.status(200).json({
             feedback: feedbackForUser
           })
         });
@@ -37,7 +37,7 @@ export default class FeedbackController{
             slackBody.attachments = [{author_name: req.subject.firstName, text: feedback.content}]
 
             this.slackService.submitToWebhook(process.env.SLACK_FEEDBACKURL, slackBody);
-            res.send(201).json({feedback: feedback});
+            res.status(201).json({feedback: feedback});
         });
 
         this.routes = router;
