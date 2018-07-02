@@ -7,7 +7,7 @@ export default class FeedbackContainer{
 
     }
 
-    async getAllFeedbackByUserId(user: User): Promise<Feedback[]> {
+    async getAllFeedbackByUser(user: User): Promise<Feedback[]> {
         let allFeedback = await getManager().getRepository(Feedback).find({user: user})
         return allFeedback;
     }

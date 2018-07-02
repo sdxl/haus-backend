@@ -5,6 +5,7 @@ import {Feedback} from "../../core/feedback/Feedback";
 import SlackService from "../../services/SlackService";
 import SlackBodyPayload from "../../services/SlackBodyPayload";
 import RouteAuthenticator from "../RouteAuthenticator";
+import { HausRequest } from "../HausRequest";
 
 require('dotenv').config();
 
@@ -21,19 +22,19 @@ export default class FeedbackController{
         const feedbackContainer = new FeedbackContainer();
         const router = express.Router();
     
-        router.get('/', new RouteAuthenticator().isAuthenticated, async (req: Request, res: Response) => {
-          let feedbackForUser = await feedbackContainer.getAllFeedbackByUserId(req.session.subject);
+        router.get('/', new RouteAuthenticator().isAuthenticated, async (req: HausRequest, res: Response) => {
+          let feedbackForUser = await feedbackContainer.getAllFeedbackByUser(req.subject);
           res.json({
             feedback: feedbackForUser
           })
         });
 
-        router.post('/', new RouteAuthenticator().isAuthenticated, async (req: Request, res: Response) => {
+        router.post('/', new RouteAuthenticator().isAuthenticated, async (req: HausRequest, res: Response) => {
             let tempFeedback = req.body as Feedback;
-            await feedbackContainer.addNewFeedback(tempFeedback, req.session.subject);
+            await feedbackContainer.addNewFeedback(tempFeedback, req.subject);
             
             let slackBody = new SlackBodyPayload();
-            slackBody.attachments = [{author_name: req.session.subject.firstName, text: tempFeedback.content}]
+            slackBody.attachments = [{author_name: req.subject.firstName, text: tempFeedback.content}]
 
             this.slackService.submitToWebhook(process.env.SLACK_FEEDBACKURL, slackBody);
             res.sendStatus(200);

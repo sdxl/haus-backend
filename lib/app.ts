@@ -6,26 +6,13 @@ import { createConnection } from "typeorm";
 import {Feedback} from "./core/feedback/Feedback";
 import PrincipalController from "./rest/controllers/PrincipalController";
 import { Principal } from "./core/security/Principal";
-import * as ExpressSession from "express-session";
 import { User } from "./core/user/User";
 require('dotenv').config();
-import * as cookieParser from "cookie-parser";
 
 class App {
 
   constructor() {
     this.app = express();
-    this.app.use(cookieParser());
-    this.app.use(ExpressSession({
-      secret: "my-greatest-secret",
-      cookie:{
-        maxAge: 60 * 60 * 1000,
-        secure: false,
-      },
-      resave: false,
-      saveUninitialized: true,
-    }));
-
     this.connectDB();
     this.config();
     this.routes();

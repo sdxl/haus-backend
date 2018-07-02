@@ -1,6 +1,8 @@
 import * as express from "express";
 import { Request, Response } from "express";
 import PrincipalContainer from "../../core/security/PrincipalContainer";
+import * as jwt from "jsonwebtoken";
+import { Session } from "../../core/session/Session";
 
 export default class PrincipalController{
     public routes: express.Router;
@@ -17,11 +19,10 @@ export default class PrincipalController{
             let user = await principalContainer.validatePrincipal(req.body);
             
             if(user != null){
-                console.log("user from login is: ", user);
-                req.session.subject = user;
-                console.log("retrieving session user: ", req.session.subject);
-                req.session.save((err) => err ? console.log('err from save sess is: ', err) : "");
-                res.sendStatus(200);
+                let token = jwt.sign({subject: user}, process.env.JWT_SECRET);
+                let session = new Session();
+                session.token = token;
+                res.status(200).json({session: session});
             }else{
                 res.sendStatus(400);
             }
@@ -31,20 +32,14 @@ export default class PrincipalController{
             let tempPrincipal = req.body;
             let user = await principalContainer.addNewPrincipal(tempPrincipal);
             if(user != null){
-                req.session.subject = user;
-                res.sendStatus(200);
+                let token = jwt.sign({subject: user}, process.env.JWT_SECRET);
+                let session = new Session();
+                session.token = token;
+
+                res.status(200).json({session: session});
             }else{
                 res.sendStatus(400);
             }
-        });
-
-        router.post('/logout', async (req: Request, res: Response) => {
-            req.session.destroy((err) => {
-                if(err){
-                    console.log(err);
-                }
-                res.sendStatus(200);
-            })
         });
 
         this.routes = router;
